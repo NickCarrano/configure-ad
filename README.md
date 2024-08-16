@@ -26,7 +26,6 @@ This tutorial outlines the implementation of on-premises Active Directory within
 - Create an Admin and Normal User Account in AD
 - Join Client-1 to your domain (mydomain.com)
 - Setup Remote Desktop for non-administrative users on Client-1
-- Create additional users and attempt to log into client-1 with one of the users
 
 
 <h2>Deployment and Configuration Steps</h2>
@@ -98,7 +97,8 @@ This tutorial outlines the implementation of on-premises Active Directory within
 <p>
 <h3>Create an Admin and Normal User Account in Active Directory</h3>
 
-![Screenshot_204](https://github.com/user-attachments/assets/3ba4ff87-b8a1-4a51-be55-c05bd38d8ad3)
+![Screenshot_205](https://github.com/user-attachments/assets/47fd20d2-c7f4-4b7d-b8da-fda15a507e08)
+
 
 </p>
 <p>
@@ -109,8 +109,70 @@ This tutorial outlines the implementation of on-premises Active Directory within
   - Open the 'mydomain.com' section
   - Create an Organizational Unit (OU) called '_EMPLOYEES'
   - Create another OU called '_ADMINS'
-  - In the _EMPLOYEES section, create a new emplyee named 'Jane Doe' with the username of 'jane_admin'
+  - In the 'Users' section, create a new user named 'Jane Doe' with the username of 'jane_admin'
     - Use a memorable password or the same password you have been using up to this point
+- Add jane_admin to the 'Domain Admins' security group
+  - Right-click on Jane Doe and select 'Add to a Group'
+  - In the field at the bottom type 'domain admins' and click 'Check names'
+    - If done correctly the name should now be underlined
+  - Click 'OK'
+- Create a Normal User
+  - In the 'Users' section, create a new user named 'John Doe' with the username of 'john_doe'
+    - Use a memorable password or the same password you have been using up to this point
+- Log out or close the Remote Desktop Connection to DC-1 and log back in as 'mydomain.com\jane_admin'
+  - This will be our Admin account from now on
+</p>
+<br />
 
+<p>
+<h3>Join Client-1 to your Domain (mydomain.com)</h3>
+
+![Screenshot_206](https://github.com/user-attachments/assets/5cc5f22c-972e-4ce7-9ca6-1ec5b34a8242)
+
+
+</p>
+<p>
+
+- Set Client-1's DNS settings to DC-1's private IP address
+  - In the Azure portal, navigate to Virtual Machines -> Client-1 -> Network Settings
+  - Click on the 'Network Interface' section towards the top
+  - Click the 'DNS Servers' section on the left side
+  - Change DNS Servers from 'Inherit from Virtual Network' to 'Custom'
+  - In the field, enter DC-1's Private IP adress and click 'Save'
+  - Once the change is made, restart Client-1
+- Join Client-1 to the Domain
+  - Login to Client-1 through Remote Desktop Connection
+    - Use the original local Admin to login (labuser)
+  - Right-click on the start menu and go to 'System'
+  - On the right side, select 'Rename this PC (Advanced)'
+  - Click the button labeled 'Change'
+  - Change the 'Member of' section from 'Workgroup' to 'Domain'
+  - Enter the name of your domain (mydomain.com) and click 'OK'
+  - Enter the full login info for the 'jane_admin' account and click 'OK'
+    - The system will welcome you to the domain and ask you to restart your computer
+- Verify Client-1 is visible from DC-1
+  - Login to DC-1 and return to 'Active Directory Users and Computers'
+  - Go to the 'Computers' section and make sure Clinet-1 is there
+
+</p>
+<br />
+
+<p>
+<h3>Setup Remote Desktop for Non-Administrative Users on Client-1</h3>
+
+![Screenshot_207](https://github.com/user-attachments/assets/c6c79a66-5364-4612-80e9-99f71cdc5dd6)
+
+
+</p>
+<p>
+
+- Log into Client-1 as 'mydomain.com\jane_admin' and open system properties
+  - Click 'Remote Desktop' on the right
+- Under 'User Accounts' click 'Select users that can remotely access this PC'
+  - Click 'Add'
+- Type 'domain users' in the field and click 'Check Names'
+  - Click 'OK'
+- You can now log into Client-1 as a non-administrative user
+  - Test this by logging out of Client-1 and logging back in as 'mydomain.com\john_doe'
 </p>
 <br />
